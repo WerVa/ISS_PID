@@ -50,11 +50,11 @@
                         <h2>Ustawienie parametrów zbiornika</h2>
                         <div class="form-group">
                             <label for="surface_area_range">Pole powierzchni przekroju poprzecznego</label>
-                            {{ form.A (type="number", class="form-control", id="surface_area_range")}}
+                            {{ form.A (type="number", class="form-control", id="surface_area_range", step="0.1" )}}
                         </div>
                         <div class="form-group">
                             <label for="discharge_coefficient_range">Współczynnik wypływu</label>
-                            {{ form.B (type="number", class="form-control", id="discharge_coefficient_range")}}
+                            {{ form.B (type="number", class="form-control", id="discharge_coefficient_range",step="0.1")}}
                         </div>
                         <div class="form-group">
                             <label for="h_max_range">Maksymalny poziom substancji w zbiorniku</label>
