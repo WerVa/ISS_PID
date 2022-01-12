@@ -39,5 +39,16 @@ def SomeFunction():
     UAR.display(obiekt)
     return "plot.png"
 
+@app.route("/Generate_plot_Fuzz")
+def GenerateFuzzy():
+    UAR.FuzzyDisplay(obiekt)
+    return "Fuzze.png"
+
+@app.route("/Generate_porownanie")
+def GenerateSet():
+    UAR.Porownanie(obiekt)
+    return "porownanie.png"
+
+
 if __name__ == '__main__':
     app.run()
