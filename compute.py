@@ -303,4 +303,4 @@ class UAR:
         self.reset_data()
 
 obiekt = UAR()
-UAR.Porownanie(obiekt)
+#UAR.Porownanie(obiekt)
