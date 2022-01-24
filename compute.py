@@ -54,12 +54,15 @@ class UAR:
         self.pid['integration_time'] = float(listatoUaR[2])  # niewykorzystywane w fuzzy
         self.pid['gain'] = float(listatoUaR[3])              # niewykorzystywane w fuzzy
         self.pid['h_z'].append(float(listatoUaR[4]))
-        self.tank['A'] = float(listatoUaR[5])
-        self.tank['B'] = float(listatoUaR[6])
-        self.tank['h_max'] = int(listatoUaR[7])
-        self.valvee['u_max'] = int(listatoUaR[8])
-        self.valvee['u_min'] = int(listatoUaR[9])
-        self.valvee['Q_d_max'] = int(listatoUaR[10])
+        self.fuzzy_val['k_e'] = float(listatoUaR[5])
+        self.fuzzy_val['k_ce'] = float(listatoUaR[6])
+        self.tank['A'] = float(listatoUaR[7])
+        self.tank['B'] = float(listatoUaR[8])
+        self.tank['h_max'] = int(listatoUaR[9])
+        self.valvee['u_max'] = int(listatoUaR[10])
+        self.valvee['u_min'] = int(listatoUaR[11])
+        self.valvee['Q_d_max'] = int(listatoUaR[12])
+      
 
     def reset_data(self):
 
