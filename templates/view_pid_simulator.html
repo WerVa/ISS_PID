@@ -45,6 +45,21 @@
                             </div>
                             <span class="font-weight-bold ml-2 h_z_value"></span>
                         </div>
+                            <div class="form-group">
+                            <label for="error_range">Fuzzy Error</label>
+                            <div class="w-75">
+                                {{ form.error(type="range", class="custom-range form-control", id="error_range", min="0", max="10", step="0.01") }}
+                            </div>
+                            <span class="font-weight-bold ml-2 error_value"></span>
+                        </div>
+                          <div class="form-group">
+                            <label for="errorChange_range">Fuzzy Error Change</label>
+                            <div class="w-75">
+                                {{ form.errorChange(type="range", class="custom-range form-control", id="errorChange_range", min="0", max="10", step="0.01") }}
+                            </div>
+                            <span class="font-weight-bold ml-2 errorChange_value"></span>
+                        </div>
+
                     </div>
                     <div class="col-4">
                         <h2>Ustawienie parametrów zbiornika</h2>
