@@ -45,4 +45,19 @@ $(document).ready(function () {
         $h_z_value.html($h_z_range.val());
     })
 
+    const $error_value = $('.error_value');
+    const $error_range = $('#error_range');
+
+    $error_value.html($error_range.val());
+    $error_range.on('input change', () => {
+        $error_value.html($error_range.val());
+    })
+
+    const $errorChange_value = $('.errorChange_value');
+    const $errorChange_range = $('#errorChange_range');
+
+    $errorChange_value.html($errorChange_range.val());
+    $errorChange_range.on('input change', () => {
+    $errorChange_value.html($errorChange_range.val());
+    })
 })
