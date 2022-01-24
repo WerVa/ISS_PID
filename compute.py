@@ -34,9 +34,9 @@ class UAR:
         'Q_o': [],                  # natężenie odpływu
     }
     fuzzy_val = {
-         'k_e': 0.20,  # error
-         'k_ce': 0.03,  # errorChange
-          'k_u': 0.05,  # u
+        'k_e': 0.25,                # error
+        'k_ce': 0.5,                # errorChange
+        'k_u': 0.2,                 # u
     }
     N = 10000
     x = [0, ] # wzór na  sampletime to 1000 * sample time
@@ -114,156 +114,165 @@ class UAR:
         self.reset_data()
 
 
-def fuzzy_pid_controller_with_simulation(self):
-        self.reset_sim_data()
+#FUZZY
+    def Fuzzy(self):
+        #fuzzyValue
+        self.JsonDate()
 
-        ins = ['DU', 'SU', 'SU', 'Z', 'MD', 'SD', 'DD'] # przestrzen lingwistyczna Xl
-        outs = ['BDU', 'DU', 'SU', 'MU', 'Z', 'MD', 'SD', 'DD', 'BDD'] # wartosci lingwiztyczne
-        e = ctrl.Antecedent(np.arange(-1, 1, 0.01), 'e') # uchyb regulacji
-        ce = ctrl.Antecedent(np.arange(-1, 1, 0.01), 'ce') # zmiana uchybu regulacji
-        cu = ctrl.Consequent(np.arange(-1, 1, 0.01), 'cu') # zmiana wielkości sterującej
+        ins = ['DU', 'SU', 'MU', 'Z', 'MD', 'SD', 'DD']
+        outs = ['BDU', 'DU', 'SU', 'MU', 'Z', 'MD', 'SD', 'DD', 'BDD']
 
-        # Ustawienie zakresów dla poszczególnych wartosci
+        e = ctrl.Antecedent(np.arange(-1, 1, 0.01), 'e')
+        ce = ctrl.Antecedent(np.arange(-1, 1, 0.01), 'ce')
+        cu = ctrl.Consequent(np.arange(-1, 1, 0.01), 'cu')
 
-        e.automf(7, names=ins)
-        ce.automf(7, names=ins)
+        e['DU'] = fuzz.trimf(e.universe, [-1.333, -1, -0.6667])
+        e['SU'] = fuzz.trimf(e.universe, [-1, -0.6667, -0.3333])
+        e['MU'] = fuzz.trimf(e.universe, [-0.6667, -0.3333, -5.551e-17])
+        e['Z'] = fuzz.trimf(e.universe, [-0.3333, 0.0, 0.3333])
+        e['MD'] = fuzz.trimf(e.universe, [-5.551e-17, 0.3333, 0.6667])
+        e['SD'] = fuzz.trimf(e.universe, [0.3333, 0.6667, 1])
+        e['DD'] = fuzz.trimf(e.universe, [0.6667, 1, 1.333])
 
-        cu['BDU'] = fuzz.trimf(cu.universe, [-1.0, -1.0, -0.7])
-        cu['DU'] = fuzz.trimf(cu.universe, [-1.0, -0.7, -0.4])
-        cu['SU'] = fuzz.trimf(cu.universe, [-0.7, -0.4, -0.1])
-        cu['MU'] = fuzz.trimf(cu.universe, [-0.4, -0.1, 0.0])
-        cu['Z'] = fuzz.trimf(cu.universe, [-0.1, 0.0, 0.1])
-        cu['MD'] = fuzz.trimf(cu.universe, [0.0, 0.1, 0.4])
-        cu['SD'] = fuzz.trimf(cu.universe, [0.1, 0.4, 0.7])
-        cu['DD'] = fuzz.trimf(cu.universe, [0.4, 0.7, 1.0])
-        cu['BDD'] = fuzz.trimf(cu.universe, [0.7, 1.0, 1.0])
+        ce['DU'] = fuzz.trimf(ce.universe, [-1.333, -1, -0.6667])
+        ce['SU'] = fuzz.trimf(ce.universe, [-1, -0.6667, -0.3333])
+        ce['MU'] = fuzz.trimf(ce.universe, [-0.6667, -0.3333, -5.551e-17])
+        ce['Z'] = fuzz.trimf(ce.universe, [-0.3333, 0.0, 0.3333])
+        ce['MD'] = fuzz.trimf(ce.universe, [-5.551e-17, 0.3333, 0.6667])
+        ce['SD'] = fuzz.trimf(ce.universe, [0.3333, 0.6667, 1])
+        ce['DD'] = fuzz.trimf(ce.universe, [0.6667, 1, 1.333])
 
-        # ------------------ Reguly sterowania -------------------
+        cu['BDU'] = fuzz.trimf(cu.universe, [-1.25, -1, -0.75])
+        cu['DU'] = fuzz.trimf(cu.universe, [-1, -0.75, -0.5])
+        cu['SU'] = fuzz.trimf(cu.universe, [-0.75, -0.5, -0.25])
+        cu['MU'] = fuzz.trimf(cu.universe, [-0.5, -0.25, 0])
+        cu['Z'] = fuzz.trimf(cu.universe, [-0.25, 0.0, 0.25])
+        cu['MD'] = fuzz.trimf(cu.universe, [0, 0.25, 0.5])
+        cu['SD'] = fuzz.trimf(cu.universe, [0.25, 0.5, 0.75])
+        cu['DD'] = fuzz.trimf(cu.universe, [0.5, 0.75, 1])
+        cu['BDD'] = fuzz.trimf(cu.universe, [0.75, 1, 1.25])
 
-        rules = [ctrl.Rule(e['DU'] & ce['DU'], cu['BDU'])]
-        rules.append(ctrl.Rule(e['SU'] & ce['DU'], cu['BDU']))
-        rules.append(ctrl.Rule(e['SU'] & ce['DU'], cu['BDU']))
-        rules.append(ctrl.Rule(e['Z'] & ce['DU'], cu['DU']))
-        rules.append(ctrl.Rule(e['MD'] & ce['DU'], cu['SU']))
-        rules.append(ctrl.Rule(e['SD'] & ce['DU'], cu['MU']))
-        rules.append(ctrl.Rule(e['DD'] & ce['DU'], cu['Z']))
-
-        rules.append(ctrl.Rule(e['DU'] & ce['SU'], cu['BDU']))
-        rules.append(ctrl.Rule(e['SU'] & ce['SU'], cu['BDU']))
-        rules.append(ctrl.Rule(e['SU'] & ce['SU'], cu['DU']))
-        rules.append(ctrl.Rule(e['Z'] & ce['SU'], cu['SU']))
-        rules.append(ctrl.Rule(e['MD'] & ce['SU'], cu['MU']))
-        rules.append(ctrl.Rule(e['SD'] & ce['SU'], cu['Z']))
-        rules.append(ctrl.Rule(e['DD'] & ce['SU'], cu['MD']))
-
-        rules.append(ctrl.Rule(e['DU'] & ce['SU'], cu['BDU']))
-        rules.append(ctrl.Rule(e['SU'] & ce['SU'], cu['DU']))
-        rules.append(ctrl.Rule(e['SU'] & ce['SU'], cu['SU']))
-        rules.append(ctrl.Rule(e['Z'] & ce['SU'], cu['MU']))
-        rules.append(ctrl.Rule(e['MD'] & ce['SU'], cu['Z']))
-        rules.append(ctrl.Rule(e['SD'] & ce['SU'], cu['MD']))
-        rules.append(ctrl.Rule(e['DD'] & ce['SU'], cu['SD']))
-
-        rules.append(ctrl.Rule(e['DU'] & ce['Z'], cu['DU']))
-        rules.append(ctrl.Rule(e['SU'] & ce['Z'], cu['SU']))
-        rules.append(ctrl.Rule(e['SU'] & ce['Z'], cu['MU']))
-        rules.append(ctrl.Rule(e['Z'] & ce['Z'], cu['Z']))
-        rules.append(ctrl.Rule(e['MD'] & ce['Z'], cu['MD']))
-        rules.append(ctrl.Rule(e['SD'] & ce['Z'], cu['SD']))
-        rules.append(ctrl.Rule(e['DD'] & ce['Z'], cu['DD']))
-
-        rules.append(ctrl.Rule(e['DU'] & ce['MD'], cu['SU']))
-        rules.append(ctrl.Rule(e['SU'] & ce['MD'], cu['MU']))
-        rules.append(ctrl.Rule(e['SU'] & ce['MD'], cu['Z']))
-        rules.append(ctrl.Rule(e['Z'] & ce['MD'], cu['MD']))
-        rules.append(ctrl.Rule(e['MD'] & ce['MD'], cu['SD']))
-        rules.append(ctrl.Rule(e['SD'] & ce['MD'], cu['DD']))
-        rules.append(ctrl.Rule(e['DD'] & ce['MD'], cu['BDD']))
-
-        rules.append(ctrl.Rule(e['DU'] & ce['SD'], cu['MU']))
-        rules.append(ctrl.Rule(e['SU'] & ce['SD'], cu['Z']))
-        rules.append(ctrl.Rule(e['SU'] & ce['SD'], cu['MD']))
-        rules.append(ctrl.Rule(e['Z'] & ce['SD'], cu['SD']))
-        rules.append(ctrl.Rule(e['MD'] & ce['SD'], cu['DD']))
-        rules.append(ctrl.Rule(e['SD'] & ce['SD'], cu['BDD']))
-        rules.append(ctrl.Rule(e['DD'] & ce['SD'], cu['BDD']))
-
-        rules.append(ctrl.Rule(e['DU'] & ce['DD'], cu['Z']))
-        rules.append(ctrl.Rule(e['SU'] & ce['DD'], cu['MD']))
-        rules.append(ctrl.Rule(e['SU'] & ce['DD'], cu['SD']))
-        rules.append(ctrl.Rule(e['Z'] & ce['DD'], cu['DD']))
-        rules.append(ctrl.Rule(e['MD'] & ce['DD'], cu['BDD']))
-        rules.append(ctrl.Rule(e['SD'] & ce['DD'], cu['BDD']))
-        rules.append(ctrl.Rule(e['DD'] & ce['DD'], cu['BDD']))
-
-        # System Simulation
+        # BDU
+        rules = [ctrl.Rule(e[ins[0]] & ce[ins[0]], cu[outs[0]])]
+        rules.append(ctrl.Rule(e[ins[1]] & ce[ins[0]], cu[outs[0]]))
+        rules.append(ctrl.Rule(e[ins[0]] & ce[ins[1]], cu[outs[0]]))
+        rules.append(ctrl.Rule(e[ins[1]] & ce[ins[1]], cu[outs[0]]))
+        rules.append(ctrl.Rule(e[ins[2]] & ce[ins[0]], cu[outs[0]]))
+        rules.append(ctrl.Rule(e[ins[0]] & ce[ins[2]], cu[outs[0]]))
+        # DU
+        rules.append(ctrl.Rule(e[ins[3]] & ce[ins[0]], cu[outs[1]]))
+        rules.append(ctrl.Rule(e[ins[2]] & ce[ins[1]], cu[outs[1]]))
+        rules.append(ctrl.Rule(e[ins[1]] & ce[ins[2]], cu[outs[1]]))
+        rules.append(ctrl.Rule(e[ins[0]] & ce[ins[3]], cu[outs[1]]))
+        # SU
+        rules.append(ctrl.Rule(e[ins[0]] & ce[ins[4]], cu[outs[2]]))
+        rules.append(ctrl.Rule(e[ins[1]] & ce[ins[3]], cu[outs[2]]))
+        rules.append(ctrl.Rule(e[ins[2]] & ce[ins[2]], cu[outs[2]]))
+        rules.append(ctrl.Rule(e[ins[3]] & ce[ins[1]], cu[outs[2]]))
+        rules.append(ctrl.Rule(e[ins[4]] & ce[ins[0]], cu[outs[2]]))
+        # MU
+        rules.append(ctrl.Rule(e[ins[5]] & ce[ins[0]], cu[outs[3]]))
+        rules.append(ctrl.Rule(e[ins[4]] & ce[ins[1]], cu[outs[3]]))
+        rules.append(ctrl.Rule(e[ins[3]] & ce[ins[2]], cu[outs[3]]))
+        rules.append(ctrl.Rule(e[ins[2]] & ce[ins[3]], cu[outs[3]]))
+        rules.append(ctrl.Rule(e[ins[1]] & ce[ins[4]], cu[outs[3]]))
+        rules.append(ctrl.Rule(e[ins[0]] & ce[ins[5]], cu[outs[3]]))
+        # Z
+        rules.append(ctrl.Rule(e[ins[0]] & ce[ins[6]], cu[outs[4]]))
+        rules.append(ctrl.Rule(e[ins[1]] & ce[ins[5]], cu[outs[4]]))
+        rules.append(ctrl.Rule(e[ins[2]] & ce[ins[4]], cu[outs[4]]))
+        rules.append(ctrl.Rule(e[ins[3]] & ce[ins[3]], cu[outs[4]]))
+        rules.append(ctrl.Rule(e[ins[4]] & ce[ins[2]], cu[outs[4]]))
+        rules.append(ctrl.Rule(e[ins[5]] & ce[ins[1]], cu[outs[4]]))
+        rules.append(ctrl.Rule(e[ins[6]] & ce[ins[0]], cu[outs[4]]))
+        # MD
+        rules.append(ctrl.Rule(e[ins[1]] & ce[ins[6]], cu[outs[5]]))
+        rules.append(ctrl.Rule(e[ins[2]] & ce[ins[5]], cu[outs[5]]))
+        rules.append(ctrl.Rule(e[ins[3]] & ce[ins[4]], cu[outs[5]]))
+        rules.append(ctrl.Rule(e[ins[4]] & ce[ins[3]], cu[outs[5]]))
+        rules.append(ctrl.Rule(e[ins[5]] & ce[ins[2]], cu[outs[5]]))
+        rules.append(ctrl.Rule(e[ins[6]] & ce[ins[1]], cu[outs[5]]))
+        # SD
+        rules.append(ctrl.Rule(e[ins[6]] & ce[ins[2]], cu[outs[6]]))
+        rules.append(ctrl.Rule(e[ins[5]] & ce[ins[3]], cu[outs[6]]))
+        rules.append(ctrl.Rule(e[ins[4]] & ce[ins[4]], cu[outs[6]]))
+        rules.append(ctrl.Rule(e[ins[3]] & ce[ins[5]], cu[outs[6]]))
+        rules.append(ctrl.Rule(e[ins[2]] & ce[ins[6]], cu[outs[6]]))
+        # DD
+        rules.append(ctrl.Rule(e[ins[3]] & ce[ins[6]], cu[outs[7]]))
+        rules.append(ctrl.Rule(e[ins[4]] & ce[ins[5]], cu[outs[7]]))
+        rules.append(ctrl.Rule(e[ins[5]] & ce[ins[4]], cu[outs[7]]))
+        rules.append(ctrl.Rule(e[ins[6]] & ce[ins[3]], cu[outs[7]]))
+        # BDD
+        rules.append(ctrl.Rule(e[ins[6]] & ce[ins[4]], cu[outs[8]]))
+        rules.append(ctrl.Rule(e[ins[5]] & ce[ins[5]], cu[outs[8]]))
+        rules.append(ctrl.Rule(e[ins[4]] & ce[ins[6]], cu[outs[8]]))
+        rules.append(ctrl.Rule(e[ins[6]] & ce[ins[5]], cu[outs[8]]))
+        rules.append(ctrl.Rule(e[ins[5]] & ce[ins[6]], cu[outs[8]]))
+        rules.append(ctrl.Rule(e[ins[6]] & ce[ins[6]], cu[outs[8]]))
 
         cu_ctrl = ctrl.ControlSystem(rules)
         reg_cu = ctrl.ControlSystemSimulation(cu_ctrl)
 
         for x in range(0, self.N):
-            self.pid['h_z'].append(self.pid['h_z'][-1])
+            self.pid['h_z'].append(obiekt.pid['h_z'][-1])
 
         for x in range(0, self.N):
-            self.valve['Q_d'].append(1)
+            self.valvee['Q_d'].append(1)
 
         # h, Q_d, Q_o, h_z
-        # temp = [0]
+        temp = [0]
 
-        self.valve['y'][0].append(0)
-        self.valve['y'][1].append(self.valve['h_start'])
-        self.valve['y'][2].append(self.valve['Q_d'][0])
-        self.valve['y'][3].append(-(self.tank['B']) * (sqrt(self.valve['h_start'])))
-        self.valve['y'][4].append(self.pid['h_z'][0])
+        self.valvee['y'][0].append(0)
+        self.valvee['y'][1].append(self.valvee['h_start'])
+        self.valvee['y'][2].append(self.valvee['Q_d'][0])
+        self.valvee['y'][3].append(-(self.tank['B']) * (sqrt(self.valvee['h_start'])))
+        self.valvee['y'][4].append(self.pid['h_z'][0])
         e_delay = 0
         u_old = 0
 
         for x in range(1, self.N):
-            e = self.pid['h_z'][x] - self.valve['y'][1][x - 1]
-            # ke = e * (1 / self.fuzzy_val['k_e'])
-            e = e * self.fuzzy_val['k_e']
-            # temp.append(ke)
+            e = self.pid['h_z'][x] - self.valvee['y'][1][x - 1]
+            ke = e * (1 / self.fuzzy_val['k_e'])
+            temp.append(ke)
             if e > 1:
                 e = 1
             elif e < -1:
                 e = -1
 
             ce = e - e_delay
-            ce *= (1 / self.pid['sample_time'])  # T_p lub T_0
+            ce *= (1 / obiekt.pid['sample_time'])  # T_p lub T_0
             ce *= (1 / self.fuzzy_val['k_ce'])
             if ce > 1:
                 ce = 1
             elif ce < -1:
                 ce = -1
 
-            reg_cu.input['e'] = e  # error
-            reg_cu.input['ce'] = ce  # errorChange
+            reg_cu.input['e'] = e # error
+            reg_cu.input['ce'] = ce # errorChange
             reg_cu.compute()
             cu = reg_cu.output['cu']
-            u = (cu * self.pid['sample_time'] + u_old)  # T_p lub T_0
-            # temp.append(u)
+            u = (cu * obiekt.pid['sample_time'] + u_old)  # T_p lub T_0
+            temp.append(u)
 
-            self.valve['Q_d'][x] = self.fuzzy_val['k_u'] * u
+            self.valvee['Q_d'][x] = self.fuzzy_val['k_u'] * u
 
-            if self.valve['Q_d'][x] > self.valve['Q_d_max']:
-                self.valve['Q_d'][x] = self.valve['Q_d_max']
-            elif self.valve['Q_d'][x] < self.valve['Q_d_min']:
-                self.valve['Q_d'][x] = self.valve['Q_d_min']
+            if (self.valvee['Q_d'][x] >self.valvee['Q_d_max']):
+                self.valvee['Q_d'][x] = self.valvee['Q_d_max']
+            elif (self.valvee['Q_d'][x] < self.valvee['Q_d_min']):
+                self.valvee['Q_d'][x] = self.valvee['Q_d_min']
 
-            self.valve['y'][0].append(x * self.pid['sample_time'])
-            self.valve['y'][2].append(self.valve['Q_d'][x])
-            self.valve['y'][3].append(self.tank['B'] * (sqrt(self.valve['y'][1][x - 1])))
-            self.valve['y'][1].append(
-                ((self.valve['y'][2][x] - self.valve['y'][3][x]) * self.pid['sample_time']) / self.tank['A'] +
-                self.valve['y'][1][x - 1])
-            self.valve['y'][4].append(self.pid['h_z'][x])
+            self.valvee['y'][0].append((x) * obiekt.pid['sample_time'])
+            self.valvee['y'][2].append(self.valvee['Q_d'][x])
+            self.valvee['y'][3].append(self.tank['B'] * (sqrt(self.valvee['y'][1][x - 1])))
+            self.valvee['y'][1].append(((self.valvee['y'][2][x] - self.valvee['y'][3][x]) * obiekt.pid['sample_time']) / self.tank['A'] + self.valvee['y'][1][x - 1])
+            self.valvee['y'][4].append(self.pid['h_z'][x])
 
-            level = self.valve['y'][1][len(self.valve['y'][1]) - 1]
-            if level > self.tank['h_max']:
-                return 'Przekroczono górny limit', 'Ostrzeżenie', 'warning'
+            if self.valvee['y'][1][len(self.valvee['y'][1]) - 1] > self.tank['h_max']:
+                return('Przekroczono górny limit', 'Ostrzeżenie', 'warning')
 
-            if level < self.tank['h_min']:
-                return 'Przekroczono dolny limit', 'Ostrzeżenie', 'warning'
+            if self.valvee['y'][1][len(self.valvee['y'][1]) - 1] < self.tank['h_min']:
+                return('Przekroczono dolny limit', 'Ostrzeżenie', 'warning')
             e_delay = e
             u_old = u
 
