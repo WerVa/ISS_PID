@@ -1,73 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block link %}
-    {% endblock %}
-    <title>{% block title %}Symulator PID{% endblock %}</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	{% block link %}
+	{% endblock %}
+	<title>{% block title %}Symulator PID{% endblock %}</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="/static/animation_js/slider.js" type="text/javascript"></script>
+	<script src="/static/animation_js/index.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="/static/prod-assets/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 </head>
 <body style="margin: 0; padding: 0">
+<header class="header">
+	<span>PID & ROZMYTY PID</span>
+</header>
 {% block section %}
 {% endblock %}
 {% block footer %}
 {% endblock %}
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="/static/animation_js/slider.js" type="text/javascript"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-<div class="container my-3">
-<div class="col-md-12 text-center" ><input  type="button" id='retrieve' class="btn btn-dark mb-2" name="submit" value="Generuj wykres dla PID"> <input  type="button" id='fuzzy' class="btn btn-dark mb-2" name="submit" value="Generuj wykres dla Fuzzy PID"> <input  type="button" id='PidAndFuzzy' class="btn btn-dark mb-2" name="submit" value="Generuj porównanie"></div>
+<div class="lds-roller__wrapper hidden">
+	<div class="lds-roller__container">
+		<div class="lds-roller">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+		<span class="lds-roller__text">Trwa generowanie wykresu, proszę czekać</span>
+	</div>
 </div>
-<script>
-    $(document).ready(function() {
-       $('#retrieve').click(function(){
-           $.ajax({
-           url: "/Generate_plot",
-           type: "GET",
-           success: function(response) {
-               $("#myimg").attr('src', '/static/' + response);
-          },
-          error: function(xhr) {
-            //Do Something to handle error
-         }
-         });
-       });
-    });
-  </script>
-<script>
-    $(document).ready(function() {
-       $('#fuzzy').click(function(){
-           $.ajax({
-           url: "/Generate_plot_Fuzz",
-           type: "GET",
-           success: function(response) {
-               $("#myimg").attr('src', '/static/' + response);
-          },
-          error: function(xhr) {
-            //Do Something to handle error
-         }
-         });
-       });
-    });
-  </script>
-<script>
-    $(document).ready(function() {
-       $('#PidAndFuzzy').click(function(){
-           $.ajax({
-           url: "/Generate_porownanie",
-           type: "GET",
-           success: function(response) {
-               $("#myimg").attr('src', '/static/' + response);
-          },
-          error: function(xhr) {
-            //Do Something to handle error
-         }
-         });
-       });
-    });
-  </script>
-
-     <img src="" id="myimg" class="mx-auto d-block"/>
-
+<div class="container my-3">
+	<div class="col-md-12 text-center">
+		<input type="button" id='retrieve' class="btn btn-dark mb-2" name="submit"
+					 value="Generuj wykres dla PID"/>
+		<input type="button" id='fuzzy'
+					 class="btn btn-dark mb-2"
+					 name="submit"
+					 value="Generuj wykres dla Fuzzy PID"/>
+		<input type="button" id='PidAndFuzzy' class="btn btn-dark mb-2" name="submit" value="Generuj porównanie">
+	</div>
+</div>
+<img src="" id="myimg" class="mx-auto d-block"/>
+<footer class="footer">
+	<span>by WerVa</span>
+	<a href="https://github.com/WerVa/ISS_PID">Link do github</a>
+</footer>
 </body>
 </html>
