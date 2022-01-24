@@ -11,7 +11,7 @@ app.config['SECRET_KEY'] = 'mykey'
 app.config['DEBUG'] = True
 
 class MODEL(FlaskForm):
-    default_value = [0.05, 0.05, 0.75, 1, 3, 2.5, 0.25, 10, 10, -10, 1]
+    default_value = [0.05, 0.05, 0.75, 1, 3, 2.5, 0.25, 10, 10, -10, 1, 0.20, 0.03]
     sample_time = DecimalRangeField('Okres próbkowania: ', default=default_value[0])
     differential_time = DecimalRangeField('Czas wyprzedzenia: ', default=default_value[1])
     integration_time = DecimalRangeField('Czas zdwojenia :', default=default_value[2])
@@ -23,6 +23,8 @@ class MODEL(FlaskForm):
     u_max = FloatField('Maksymalna wartość sygnału sterującego: ', default=default_value[8], validators=[InputRequired()])
     u_min = FloatField('Minimalna wartość sygnału sterującego: ', default=default_value[9], validators=[InputRequired()])
     Q_d_max = FloatField('Maksymalne natężenie dopływu: ', default=default_value[10], validators=[InputRequired()])
+    error = FloatField('Fuzzy Error', default=default_value[11], validators=[InputRequired()])
+    errorChange = FloatField('Fuzzy Error Change', default=default_value[12], validators=[InputRequired()])
     submit_all = SubmitField('Zatwierdź Dane')
 
 @app.route('/', methods = ["POST","GET"])
