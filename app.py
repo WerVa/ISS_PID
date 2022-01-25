@@ -34,7 +34,7 @@ def index():
     if request.method == "POST" and form.validate():
         with open('data.json', 'w') as f:
             json.dump(request.form, f)
-    return render_template('view_pid_simulator.html', form=form)
+    return render_template('view_pid_simulator.html', form=form, home_active="class=active" )
 
 @app.route("/Generate_plot")
 def SomeFunction():
@@ -53,15 +53,15 @@ def GenerateSet():
 
 @app.route("/AboutMe")
 def GetAboutMe():
-    return render_template('AboutMe.html', title="O Autorze")
+    return render_template('AboutMe.html', title="O Autorze", AboutMe_active="class=active")
 
 @app.route("/AboutPID")
 def GetAboutPID():
-    return render_template('AboutPID.html')
+    return render_template('AboutPID.html', title="PID", PID_active="class=active")
 
 @app.route("/AboutFuzzyPID")
 def GetAboutFuzzyPID():
-    return render_template('AboutFuzzyPID.html')
+    return render_template('AboutFuzzyPID.html', title="Fuzzy PID", FuzzyPID_active="class=active")
 
 
 if __name__ == '__main__':

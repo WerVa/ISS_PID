@@ -1,4 +1,29 @@
 {% extends "base.html" %}
+{% block link %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+{% endblock %}
+
 {% block section %}
+    <div class="container my-4">
+    <h3>Sterowanie Rozmyte</h3>
+   <img src="{{url_for('static', filename='images/PID.png')}}" style=""height="300">
+ <h3>Implementacja PID</h3>
+   <pre><code class="python">
+       def pid_controler(self):
+        self.pid['error'].append((self.pid['h_z'][-1] - self.pid['h'][-1]) / 10)
+        self.valvee['u'].append(
+            (self.pid['gain'] * (self.pid['error'][-1] + (self.pid['sample_time'] / self.pid['integration_time']) * sum(
+                self.pid['error']) + (self.pid['differential_time'] / self.pid['sample_time']) * (
+                                             self.pid['error'][1] - self.pid['error'][-1]))) / 10)
+   </code>
+   </pre>
+        <h3> Polecane Linki:</h3>
+    <a href="http://jtjt.pl/regulator-pid">Regulator PID</a>
+    </br>
+    <a href="http://jtjt.pl/symulator-pid">Symulator PID</a>
+</div>
+
 
 {% endblock %}

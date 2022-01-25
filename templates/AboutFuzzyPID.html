@@ -1,4 +1,86 @@
 {% extends "base.html" %}
-{% block section %}
+{% block link %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+{% endblock %}
 
+{% block section %}
+    <div class="container my-4">
+    <h3>Sterowanie Rozmyte</h3>
+   <img src="{{url_for('static', filename='images/fuzzy.png')}}" style=""height="300">
+<h3>Baza reguł</h3>
+   <img src="{{url_for('static', filename='images/WSNW1t1.png')}}">
+<h3>Baza reguł - implementacja</h3>
+         <pre><code class="html">
+             bardzo duży ujemny - BDU,
+             duży ujemny - DU,
+             średni ujemny - SU,
+             mały ujemny - MU,
+             około zera - Z,
+             mały dodatni - MD,
+             średni dodatni - SD,
+             duży dodatni - DD,
+             bardzo duży dodatni - BDD
+         </code></pre>
+
+   <pre><code class="language">
+        rules = [ctrl.Rule(e['DU'] & ce['DU'], cu['BDU'])]
+        rules.append(ctrl.Rule(e['SU'] & ce['DU'], cu['BDU']))
+        rules.append(ctrl.Rule(e['SU'] & ce['DU'], cu['BDU']))
+        rules.append(ctrl.Rule(e['Z'] & ce['DU'], cu['DU']))
+        rules.append(ctrl.Rule(e['MD'] & ce['DU'], cu['SU']))
+        rules.append(ctrl.Rule(e['SD'] & ce['DU'], cu['MU']))
+        rules.append(ctrl.Rule(e['DD'] & ce['DU'], cu['Z']))
+
+        rules.append(ctrl.Rule(e['DU'] & ce['SU'], cu['BDU']))
+        rules.append(ctrl.Rule(e['SU'] & ce['SU'], cu['BDU']))
+        rules.append(ctrl.Rule(e['SU'] & ce['SU'], cu['DU']))
+        rules.append(ctrl.Rule(e['Z'] & ce['SU'], cu['SU']))
+        rules.append(ctrl.Rule(e['MD'] & ce['SU'], cu['MU']))
+        rules.append(ctrl.Rule(e['SD'] & ce['SU'], cu['Z']))
+        rules.append(ctrl.Rule(e['DD'] & ce['SU'], cu['MD']))
+
+        rules.append(ctrl.Rule(e['DU'] & ce['SU'], cu['BDU']))
+        rules.append(ctrl.Rule(e['SU'] & ce['SU'], cu['DU']))
+        rules.append(ctrl.Rule(e['SU'] & ce['SU'], cu['SU']))
+        rules.append(ctrl.Rule(e['Z'] & ce['SU'], cu['MU']))
+        rules.append(ctrl.Rule(e['MD'] & ce['SU'], cu['Z']))
+        rules.append(ctrl.Rule(e['SD'] & ce['SU'], cu['MD']))
+        rules.append(ctrl.Rule(e['DD'] & ce['SU'], cu['SD']))
+
+        rules.append(ctrl.Rule(e['DU'] & ce['Z'], cu['DU']))
+        rules.append(ctrl.Rule(e['SU'] & ce['Z'], cu['SU']))
+        rules.append(ctrl.Rule(e['SU'] & ce['Z'], cu['MU']))
+        rules.append(ctrl.Rule(e['Z'] & ce['Z'], cu['Z']))
+        rules.append(ctrl.Rule(e['MD'] & ce['Z'], cu['MD']))
+        rules.append(ctrl.Rule(e['SD'] & ce['Z'], cu['SD']))
+        rules.append(ctrl.Rule(e['DD'] & ce['Z'], cu['DD']))
+
+        rules.append(ctrl.Rule(e['DU'] & ce['MD'], cu['SU']))
+        rules.append(ctrl.Rule(e['SU'] & ce['MD'], cu['MU']))
+        rules.append(ctrl.Rule(e['SU'] & ce['MD'], cu['Z']))
+        rules.append(ctrl.Rule(e['Z'] & ce['MD'], cu['MD']))
+        rules.append(ctrl.Rule(e['MD'] & ce['MD'], cu['SD']))
+        rules.append(ctrl.Rule(e['SD'] & ce['MD'], cu['DD']))
+        rules.append(ctrl.Rule(e['DD'] & ce['MD'], cu['BDD']))
+
+        rules.append(ctrl.Rule(e['DU'] & ce['SD'], cu['MU']))
+        rules.append(ctrl.Rule(e['SU'] & ce['SD'], cu['Z']))
+        rules.append(ctrl.Rule(e['SU'] & ce['SD'], cu['MD']))
+        rules.append(ctrl.Rule(e['Z'] & ce['SD'], cu['SD']))
+        rules.append(ctrl.Rule(e['MD'] & ce['SD'], cu['DD']))
+        rules.append(ctrl.Rule(e['SD'] & ce['SD'], cu['BDD']))
+        rules.append(ctrl.Rule(e['DD'] & ce['SD'], cu['BDD']))
+
+        rules.append(ctrl.Rule(e['DU'] & ce['DD'], cu['Z']))
+        rules.append(ctrl.Rule(e['SU'] & ce['DD'], cu['MD']))
+        rules.append(ctrl.Rule(e['SU'] & ce['DD'], cu['SD']))
+        rules.append(ctrl.Rule(e['Z'] & ce['DD'], cu['DD']))
+        rules.append(ctrl.Rule(e['MD'] & ce['DD'], cu['BDD']))
+        rules.append(ctrl.Rule(e['SD'] & ce['DD'], cu['BDD']))
+        rules.append(ctrl.Rule(e['DD'] & ce['DD'], cu['BDD']))
+   </code>
+   </pre>
+</div>
 {% endblock %}
