@@ -1,59 +1,56 @@
 {% extends "base.html" %}
-{% block link %}
-    <link rel="stylesheet" href="/static/prod-assets/bootstrap.min.css">
-{% endblock %}
 {% block section %}
     <div class="container">
         <form method="POST" action="/">
             {{ form.hidden_tag() }}
             <form>
-                <div class="row mt-5">
-                    <div class="col-4">
-                        <h2>Ustawienie parametrów regulatora</h2>
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <h3>Ustawienie parametrów regulatora</h3>
                         <div class="form-group">
-                            <label for="sample_time_range">Okres próbkowania <abbr class="help" title="Okres próbkowania, obliczny jest ze wzoru 10 000 * wybrana przez użykownika wartość ze slidera"><code><i class="fa fa-question-circle" aria-hidden="true"></i></code></abbr></label>
+                            <label for="sample_time_range">Okres próbkowania [0;1]</label>
                             <div class="w-75">
                                 {{ form.sample_time(type="range", class="custom-range form-control", id="sample_time_range", min="0", max="1", step="0.01") }}
                             </div>
                             <span class="font-weight-bold ml-2 sample_time_value"></span>
                         </div>
                         <div class="form-group">
-                            <label for="differential_time_range">Czas wyprzedzenia <abbr class="help" title="Czas wyprzedzenie działa aktualnie tylko w wykresie dla zwykłego PID"><code><i class="fa fa-question-circle" aria-hidden="true"></i></code></abbr></label>
+                            <label for="differential_time_range">Czas wyprzedzenia [0;1]</label>
                             <div class="w-75">
                                 {{ form.differential_time(type="range", class="custom-range form-control", id="differential_time_range", min="0", max="1", step="0.01") }}
                             </div>
                             <span class="font-weight-bold ml-2 differential_time_value"></span>
                         </div>
                         <div class="form-group">
-                            <label for="integration_time_range">Czas zdwojenia</label>
+                            <label for="integration_time_range">Czas zdwojenia [0;1]</label>
                             <div class="w-75">
                                 {{ form.integration_time(type="range", class="custom-range form-control", id="integration_time_range", min="0", max="1", step="0.01") }}
                             </div>
                             <span class="font-weight-bold ml-2 integration_time_value"></span>
                         </div>
                         <div class="form-group">
-                            <label for="gain_range">Wartość wzmocnienia regulatora</label>
+                            <label for="gain_range">Wartość wzmocnienia regulatora [0;15]</label>
                             <div class="w-75">
                                 {{ form.gain(type="range", class="custom-range form-control", id="gain_range", min="0", max="15", step="0.1") }}
                             </div>
                             <span class="font-weight-bold ml-2 gain_value"></span>
                         </div>
                         <div class="form-group">
-                            <label for="h_z_range">Wartość zadana</label>
+                            <label for="h_z_range">Wartość zadana [0;10]</label>
                             <div class="w-75">
                                 {{ form.h_z(type="range", class="custom-range form-control", id="h_z_range", min="0", max="10", step="0.1") }}
                             </div>
                             <span class="font-weight-bold ml-2 h_z_value"></span>
                         </div>
                             <div class="form-group">
-                            <label for="error_range">Fuzzy Error</label>
+                            <label for="error_range">Fuzzy Error [0;10]</label>
                             <div class="w-75">
                                 {{ form.error(type="range", class="custom-range form-control", id="error_range", min="0", max="10", step="0.01") }}
                             </div>
                             <span class="font-weight-bold ml-2 error_value"></span>
                         </div>
                           <div class="form-group">
-                            <label for="errorChange_range">Fuzzy Error Change</label>
+                            <label for="errorChange_range">Fuzzy Error Change [0;10]</label>
                             <div class="w-75">
                                 {{ form.errorChange(type="range", class="custom-range form-control", id="errorChange_range", min="0", max="10", step="0.01") }}
                             </div>
@@ -61,8 +58,8 @@
                         </div>
 
                     </div>
-                    <div class="col-4">
-                        <h2>Ustawienie parametrów zbiornika</h2>
+                    <div class="col-5">
+                        <h3>Ustawienie parametrów zbiornika</h3>
                         <div class="form-group">
                             <label for="surface_area_range">Pole powierzchni przekroju poprzecznego</label>
                             {{ form.A (type="number", class="form-control", id="surface_area_range", step="0.1" )}}
@@ -75,9 +72,7 @@
                             <label for="h_max_range">Maksymalny poziom substancji w zbiorniku</label>
                             {{ form.h_max (type="number", class="form-control", id="h_max_range")}}
                         </div>
-                    </div>
-                    <div class="col-4">
-                        <h2>Ustawienie parametrów zaworu</h2>
+                                <h3>Ustawienie parametrów zaworu</h3>
                         <div class="form-group">
                             <label for="u_max_range">Maksymalna wartość sygnału sterującego</label>
                             {{ form.u_max (type="number", class="form-control", id="u_max_range")}}
@@ -91,13 +86,29 @@
                             {{ form.Q_d_max (type="number", class="form-control", id="Q_d_max_range")}}
                         </div>
                     </div>
-                </div>
+                    </div>
                 <div class="row mt-1">
-                    <div class="form-group p-3 mx-auto">
-                        {{ form.submit_all (class="btn btn-dark") }}
+                    <div class="form-group p-3 mx-auto ">
+                        <button type="submit" class="btn btn-outline-dark btn-floating">
+                            <i class="fas fa-check"></i> Zatwierdź dane</a>
+                        </button>
+                        <a class="btn btn-outline-dark btn-floating m-1" href="{{ url_for('index') }}" role="button">
+                            <i class="fas fa-broom"></i> Wyczyść Dane</a>
                     </div>
                 </div>
             </form>
         </form>
     </div>
+{#PRZYCISKI DOLNE#}
+    <div class="container my-3">
+	<div class="col-md-12 text-center">
+		<input type="button" id='retrieve' class="btn btn-outline-dark btn-floating mb-2" name="submit"
+					 value="Generuj wykres dla PID"/>
+		<input type="button" id='fuzzy'
+					 class="btn btn-outline-dark mb-2"
+					 name="submit"
+					 value="Generuj wykres dla Fuzzy PID"/>
+		<input type="button" id='PidAndFuzzy' class="btn btn-outline-dark mb-2" name="submit" value="Generuj porównanie">
+	</div>
+</div>
 {% endblock %}

@@ -48,7 +48,6 @@ class UAR:
             for key, value in data_dict.items():
                 listatoUaR.append(value)
         listatoUaR.remove(listatoUaR[0])
-        listatoUaR.remove(listatoUaR[-1])
         self.pid['sample_time'] = float(listatoUaR[0])
         self.pid['differential_time'] = float(listatoUaR[1]) # niewykorzystywane w fuzzy
         self.pid['integration_time'] = float(listatoUaR[2])  # niewykorzystywane w fuzzy
@@ -220,8 +219,8 @@ class UAR:
 
         for x in range(1, self.N):
             e = self.pid['h_z'][x] - self.valvee['y'][1][x - 1]
+            ke = e * (1 / self.fuzzy_val['k_e'])
             e = e * self.fuzzy_val['k_e']
-            #ke = e * (1 / self.fuzzy_val['k_e'])
             #temp.append(ke)
             if e > 1:
                 e = 1

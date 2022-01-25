@@ -51,6 +51,18 @@ def GenerateSet():
     UAR.Porownanie(obiekt)
     return "porownanie.png"
 
+@app.route("/AboutMe")
+def GetAboutMe():
+    return render_template('AboutMe.html', title="O Autorze")
+
+@app.route("/AboutPID")
+def GetAboutPID():
+    return render_template('AboutPID.html')
+
+@app.route("/AboutFuzzyPID")
+def GetAboutFuzzyPID():
+    return render_template('AboutFuzzyPID.html')
+
 
 if __name__ == '__main__':
     app.run()
