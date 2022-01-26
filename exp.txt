@@ -1,0 +1,21 @@
+   PID: 
+
+ error -> uchyb regulacji 
+ gain -> wartość wzmocnienia regulatora [Kp]
+ sample_time -> czas próbkowania [Ti]
+ differential_time -> czas wprzedzenia [Td]
+ integration_time -> czas zdwojenia
+ h_z -> wartość zadania 
+ h -> poziom substancji w zbiorniku 
+
+  Fuzzy: 
+  
+ k_e -> uchyb regulacji 
+ k_ce -> zmiana uchybu regulacji 
+ k_u -> wielkość sterująca
+
+
+  Time: 
+  
+  N = 10000
+  x = [0, ] # wzór na  sampletime to 1000 * sample time
